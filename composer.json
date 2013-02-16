@@ -1,7 +1,7 @@
 {
     "name": "crisu83/yii-image",
     "description": "Image versioning and manipulation for the Yii PHP framework.",
-    "keywords": ["less"],
+    "keywords": ["image", "versioning", "manipulation"],
     "type": "yii-extension",
     "license": "BSD-3-Clause",
     "authors": [
