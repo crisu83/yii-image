@@ -39,6 +39,10 @@ class Imager extends CApplicationComponent
 	 */
 	public $baseUrl;
 	/**
+	 * @var string base path.
+	 */
+	public $basePath = 'webroot';
+	/**
 	 * @var string relative path where to store images.
 	 */
 	public $imagePath = 'files/images/';
@@ -54,10 +58,6 @@ class Imager extends CApplicationComponent
 	 * @var array image versions configurations.
 	 */
 	public $versions = array();
-	/**
-	 * @var string base path.
-	 */
-	protected $_basePath;
 	/**
 	 * @var string path to the original images.
 	 */
@@ -75,17 +75,17 @@ class Imager extends CApplicationComponent
 	 */
 	public function init()
 	{
-		if (Yii::getPathOfAlias('image') === false)
-			Yii::setPathOfAlias('image', dirname(__FILE__).'/..');
-
+		Yii::setPathOfAlias('image', dirname(__FILE__).'/..');
 		Yii::import('image.components.*');
 		Yii::import('image.models.Image');
 
 		self::$_thumbOptions = $this->thumbOptions;
 		self::$_imagePath = $this->getImagePath(true);
 
-		if ($this->baseUrl === null)
+		if (!isset($this->baseUrl))
 			$this->baseUrl = Yii::app()->request->baseUrl;
+
+		$this->basePath = rtrim(Yii::getPathOfAlias($this->basePath), '/').'/';
 
 		parent::init();
 	}
@@ -324,7 +324,7 @@ class Imager extends CApplicationComponent
 		$path = '';
 
 		if ($absolute === true)
-			$path .= $this->getBasePath();
+			$path .= $this->basePath;
 
 		return $path.$this->imagePath;
 	}
@@ -356,7 +356,7 @@ class Imager extends CApplicationComponent
 		$path = '';
 
 		if ($absolute === true)
-			$path .= $this->getBasePath();
+			$path .= $this->basePath;
 
 		if ($this->_originalBasePath !== null)
 			$path .= $this->_originalBasePath;
@@ -376,7 +376,7 @@ class Imager extends CApplicationComponent
 		$path = '';
 
 		if ($absolute === true)
-			$path .= $this->getBasePath();
+			$path .= $this->basePath;
 
 		if ($this->_versionBasePath !== null)
 			$path .= $this->_versionBasePath;
@@ -384,18 +384,6 @@ class Imager extends CApplicationComponent
 			$path .= $this->_versionBasePath = $this->getImagePath().$this->versionDir.'/';
 
 		return $path;
-	}
-
-	/**
-	 * Returns the base path.
-	 * @return string the path.
-	 */
-	protected function getBasePath()
-	{
-		if ($this->_basePath !== null)
-			return $this->_basePath;
-		else
-			return $this->_basePath = Yii::getPathOfAlias('webroot').'/';
 	}
 
 	/**
@@ -412,7 +400,7 @@ class Imager extends CApplicationComponent
 	}
 
 	/**
-	 * Normalizes the given string by replacing special characters. �=>a, �=>e, �=>o, etc.
+	 * Normalizes the given string by replacing special characters. ï¿½=>a, ï¿½=>e, ï¿½=>o, etc.
 	 * @param string $string the text to normalize.
 	 * @return string the normalized string.
 	 * @since 1.2.0
