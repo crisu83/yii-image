@@ -8,6 +8,8 @@
  */
 class ImageController extends CController
 {
+	public $defaultAction = 'create';
+
 	/**
 	 * Creates and renders a new version of a specific image.
 	 * @param integer $id the image id.
@@ -23,6 +25,6 @@ class ImageController extends CController
 			$thumb->render();
 		}
 		else
-			throw new CHttpException(404, 'Failed to create image! Version is unknown.');
+			throw new CHttpException(404, 'Page not found.');
 	}
 }
