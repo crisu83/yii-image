@@ -129,7 +129,7 @@ class Imager extends CApplicationComponent
 			$image->filename = $file->getName();
 			$image->byteSize = $file->getSize();
 			$image->mimeType = $file->getType();
-			$image->createTime = new CDbExpression('NOW()');
+			$image->created = date('Y-m-d H:i:s');
 
 			if (empty($name))
 			{
