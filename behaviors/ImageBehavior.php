@@ -48,6 +48,24 @@ class ImageBehavior extends CBehavior
 	}
 
 	/**
+	 * Returns the url to the image for the owner of this behavior.
+	 * @return string the url.
+	 */
+	public function getImageUrl($version) {
+		$image = $this->getImager()->load($this->owner->{$this->idColumn});
+		return $image !== null ? $image->getUrl($version) : '#';
+	}
+
+	/**
+	 * Deletes the image for the owner of this behavior.
+	 * @return boolean whether the image was deleted.
+	 */
+	public function deleteImage()
+	{
+		return $this->getImager()->delete($this->owner{$this->idColumn});
+	}
+
+	/**
 	 * Returns the imager component instance.
 	 * @return Imager the component.
 	 */
