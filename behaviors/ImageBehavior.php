@@ -29,9 +29,13 @@ class ImageBehavior extends CBehavior
 	public function saveImage($file, $name = null, $path = null)
 	{
 		$image = $this->getImager()->save($file, $name, $path);
-		$this->owner->{$this->idColumn} = $image->id;
-		$this->owner->save(false);
-		return $image;
+		if ($image !== null)
+		{
+			$this->owner->{$this->idColumn} = $image->id;
+			$this->owner->save(false);
+			return $image;
+		}
+		return null;
 	}
 
 	/**
@@ -39,21 +43,23 @@ class ImageBehavior extends CBehavior
 	 * @param string $version the version name.
 	 * @param string $alt the alternative text display.
 	 * @param array $htmlOptions additional HTML attributes.
+	 * @param string $placeholder the placeholder markup.
 	 * @return string the rendered image.
 	 */
-	public function renderImage($version, $alt = '', $htmlOptions = array())
+	public function renderImage($version, $alt = '', $htmlOptions = array(), $placeholder = '')
 	{
 		$image = $this->getImager()->load($this->owner->{$this->idColumn});
-		return $image !== null ? CHtml::image($image->getUrl($version), $alt, $htmlOptions) : '';
+		return $image !== null ? CHtml::image($image->getUrl($version), $alt, $htmlOptions) : $placeholder;
 	}
 
 	/**
 	 * Returns the url to the image for the owner of this behavior.
+	 * @param string $defaultValue the default value.
 	 * @return string the url.
 	 */
-	public function getImageUrl($version) {
+	public function getImageUrl($version, $defaultValue = '#') {
 		$image = $this->getImager()->load($this->owner->{$this->idColumn});
-		return $image !== null ? $image->getUrl($version) : '#';
+		return $image !== null ? $image->getUrl($version) : $defaultValue;
 	}
 
 	/**
@@ -62,7 +68,13 @@ class ImageBehavior extends CBehavior
 	 */
 	public function deleteImage()
 	{
-		return $this->getImager()->delete($this->owner{$this->idColumn});
+		if ($this->getImager()->delete($this->owner{$this->idColumn}))
+		{
+			$this->owner->{$this->idColumn} = null;
+			$this->owner->save(false);
+			return true;
+		}
+		return false;
 	}
 
 	/**
